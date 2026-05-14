@@ -1,13 +1,3 @@
-﻿/**
- * @file main.cpp
- * @brief Сравнение алгоритмов сортировки на записях ЗАГС.
- *
- * Загружает CSV-файл с записями актов о заключении брака,
- * измеряет время работы четырёх алгоритмов сортировки
- * (выбором, шейкерной, быстрой и std::sort) на наборах
- * различного размера и сохраняет результаты в results.csv.
- */
-
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -18,15 +8,6 @@
 #include <iomanip>
 #include <chrono>
 
- /**
-  * @brief Преобразует дату из строки формата "DD.MM.YYYY" в целое число.
-  *
-  * Результирующее число строится по схеме YYYYMMDD, что позволяет
-  * сравнивать даты простым целочисленным сравнением.
-  *
-  * @param date Строка с датой в формате "DD.MM.YYYY".
-  * @return Целое число в формате YYYYMMDD.
-  */
 int dateToInt(const std::string& date) {
     int day = std::stoi(date.substr(0, 2));
     int month = std::stoi(date.substr(3, 2));
@@ -34,22 +15,6 @@ int dateToInt(const std::string& date) {
     return year * 10000 + month * 100 + day;
 }
 
-/**
- * @brief Запись об акте о заключении брака из базы ЗАГС.
- *
- * Содержит персональные данные жениха и невесты, дату и номер
- * органа ЗАГС, зарегистрировавшего брак. Поддерживает полный
- * набор операторов сравнения; порядок сортировки:
- * номер ЗАГС → дата бракосочетания → ФИО жениха.
- *
- * @var ZagsRecord::groom_fio        ФИО жениха.
- * @var ZagsRecord::groom_birth      Дата рождения жениха (строка, формат DD.MM.YYYY).
- * @var ZagsRecord::bride_fio        ФИО невесты.
- * @var ZagsRecord::bride_birth      Дата рождения невесты (строка, формат DD.MM.YYYY).
- * @var ZagsRecord::marriage_date    Дата бракосочетания (строка, формат DD.MM.YYYY).
- * @var ZagsRecord::marriage_date_int Дата бракосочетания в числовом формате YYYYMMDD для быстрого сравнения.
- * @var ZagsRecord::zags_number      Номер органа ЗАГС.
- */
 struct ZagsRecord {
     std::string groom_fio;
     std::string groom_birth;
@@ -59,15 +24,6 @@ struct ZagsRecord {
     int         marriage_date_int;
     int         zags_number;
 
-    /**
-     * @brief Трёхзначное сравнение двух записей.
-     *
-     * Сравнение выполняется последовательно по трём ключам:
-     * номер ЗАГС, дата бракосочетания, ФИО жениха.
-     *
-     * @param o Запись, с которой производится сравнение.
-     * @return -1, если текущая запись меньше; 1 — если больше; 0 — если равны.
-     */
     int compare(const ZagsRecord& o) const {
         if (zags_number != o.zags_number)
             return zags_number < o.zags_number ? -1 : 1;
@@ -81,33 +37,17 @@ struct ZagsRecord {
         return 0;
     }
 
-    /** @brief Оператор равенства. @param o Правый операнд. @return true, если записи равны. */
     bool operator==(const ZagsRecord& o) const { return compare(o) == 0; }
 
-    /** @brief Оператор «меньше». @param o Правый операнд. @return true, если текущая запись меньше. */
     bool operator< (const ZagsRecord& o) const { return compare(o) < 0; }
 
-    /** @brief Оператор «больше». @param o Правый операнд. @return true, если текущая запись больше. */
     bool operator> (const ZagsRecord& o) const { return compare(o) > 0; }
 
-    /** @brief Оператор «меньше или равно». @param o Правый операнд. @return true, если текущая запись не больше. */
     bool operator<=(const ZagsRecord& o) const { return compare(o) <= 0; }
 
-    /** @brief Оператор «больше или равно». @param o Правый операнд. @return true, если текущая запись не меньше. */
     bool operator>=(const ZagsRecord& o) const { return compare(o) >= 0; }
 };
 
-/**
- * @brief Сортировка выбором с индексным массивом.
- *
- * Алгоритм работает с вектором индексов, избегая лишних перемещений
- * объектов на каждой итерации. По завершении переставляет элементы
- * в соответствии с построенной перестановкой индексов.
- *
- * Сложность: O(n^2) сравнений, O(n) обменов индексов.
- *
- * @param arr Вектор записей для сортировки; изменяется на месте.
- */
 void selectionSort(std::vector<ZagsRecord>& arr) {
     int n = arr.size();
     std::vector<int> idx(n);
@@ -127,17 +67,7 @@ void selectionSort(std::vector<ZagsRecord>& arr) {
     arr = std::move(sorted);
 }
 
-/**
- * @brief Шейкерная (двунаправленная пузырьковая) сортировка с индексным массивом.
- *
- * На каждой итерации выполняет два прохода: слева направо (продвигает
- * максимум к правой границе) и справа налево (продвигает минимум к левой
- * границе). Сужает рабочую область после каждого прохода.
- *
- * Сложность: O(n^2) сравнений и O(n^2) обменов индексов.
- *
- * @param arr Вектор записей для сортировки; изменяется на месте.
- */
+
 void shakerSort(std::vector<ZagsRecord>& arr) {
     int n = arr.size();
     std::vector<int> idx(n);
@@ -160,20 +90,7 @@ void shakerSort(std::vector<ZagsRecord>& arr) {
     arr = std::move(sorted);
 }
 
-/**
- * @brief Быстрая сортировка (схема Хоара) — рекурсивная реализация.
- *
- * В качестве опорного элемента (pivot) используется элемент из середины
- * диапазона. Разделяет подмассив на две части и рекурсивно сортирует
- * каждую. Элементы переставляются в исходном векторе напрямую, без
- * вспомогательного индексного массива.
- *
- * Средняя сложность: O(n log n); худший случай: O(n^2).
- *
- * @param arr   Вектор записей для сортировки; изменяется на месте.
- * @param left  Левая граница сортируемого диапазона (включительно).
- * @param right Правая граница сортируемого диапазона (включительно).
- */
+
 void quickSort(std::vector<ZagsRecord>& arr, int left, int right) {
     if (left >= right) return;
     int i = left, j = right;
@@ -190,18 +107,7 @@ void quickSort(std::vector<ZagsRecord>& arr, int left, int right) {
     if (i < right) quickSort(arr, i, right);
 }
 
-/**
- * @brief Загружает записи ЗАГС из CSV-файла.
- *
- * Ожидаемый формат файла — заголовочная строка, затем строки данных
- * с полями, разделёнными запятыми, в порядке:
- * groom_fio, groom_birth, bride_fio, bride_birth, marriage_date, zags_number.
- *
- * @param filename Путь к CSV-файлу.
- * @param maxRows  Максимальное число считываемых строк данных;
- *                 -1 означает «без ограничений».
- * @return Вектор загруженных записей; пустой вектор при ошибке открытия файла.
- */
+
 std::vector<ZagsRecord> loadCSV(const std::string& filename, int maxRows = -1) {
     std::vector<ZagsRecord> result;
     std::ifstream file(filename);
@@ -232,20 +138,7 @@ std::vector<ZagsRecord> loadCSV(const std::string& filename, int maxRows = -1) {
     return result;
 }
 
-/**
- * @brief Точка входа программы.
- *
- * Выполняет следующие шаги:
- * -# Загружает полный датасет из файла zags_data.csv.
- * -# Для каждого размера выборки N из заданного списка:
- *    - Формирует подмножество из первых N записей.
- *    - Измеряет время (в миллисекундах) каждого из четырёх алгоритмов:
- *      сортировки выбором, шейкерной, быстрой и std::sort.
- *    - Выводит результаты в консоль и дописывает строку в results.csv.
- * -# Завершает работу, закрывая файл результатов.
- *
- * @return 0 при успешном завершении; 1 при ошибке ввода-вывода.
- */
+
 int main() {
 
     std::vector<ZagsRecord> fullData = loadCSV("zags_data.csv");
