@@ -1,0 +1,26 @@
+var NAVTREEINDEX0 =
+{
+"annotated.html":[0,0],
+"classes.html":[0,1],
+"files.html":[1,0],
+"functions.html":[0,2,0],
+"functions_func.html":[0,2,1],
+"globals.html":[1,1,0],
+"globals_func.html":[1,1,1],
+"index.html":[],
+"main_8cpp.html":[1,0,0],
+"main_8cpp.html#a537bd47f73baa9665c527056773cd915":[1,0,0,5],
+"main_8cpp.html#a74d76e894c1a2826b32cb992381940a1":[1,0,0,6],
+"main_8cpp.html#abac42f12a37ca14d68511683c146158f":[1,0,0,1],
+"main_8cpp.html#abbf36b61defbb324c7e80ac1bb836bcf":[1,0,0,2],
+"main_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4":[1,0,0,3],
+"main_8cpp.html#aec4417c061654f63df636f786869043e":[1,0,0,4],
+"pages.html":[],
+"struct_zags_record.html":[0,0,0],
+"struct_zags_record.html#a04b325aef0ba51074e711745464b5846":[0,0,0,1],
+"struct_zags_record.html#a800e6d1d4549bc69516b3655efec386c":[0,0,0,2],
+"struct_zags_record.html#a9ce129099527612467dd3a399a230607":[0,0,0,3],
+"struct_zags_record.html#ab3fde688a19a3c03104651cdf473aa60":[0,0,0,5],
+"struct_zags_record.html#acaa296b4b600168f30b392e816eb89d3":[0,0,0,4],
+"struct_zags_record.html#ae10c70e6c9d01bcfce393709ee9fc942":[0,0,0,0]
+};
